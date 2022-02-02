@@ -1,1 +1,1 @@
-Assistant prof CS, Durham University
+See GH-PAGES branch
