@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="29.png" />
+    <title>Leo OS</title>
+    <meta charset="UTF-8" />
+    <!-- <link rel="stylesheet" href="style.css" /> -->
+    <link rel="stylesheet" href="https://unpkg.com/@sakun/system.css" />
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        var maxZ = 0;
+        $( document ).ready(function() {
+        $( function() {
+            $( ".window").each(function(){$( this ).draggable({ handle: ".title-bar" })})
+        } );
+
+
+            $("#hideabout").click(function(){
+            $("#aboutalert").hide();
+            });
+
+            $("#showabout").click(function(){
+                $("#aboutalert").show();
+                $("#aboutalert").find("*").each(function(){  $(this).show()  });
+                // Set z-index to maxZ + 1
+                $("#aboutalert").css("z-index", maxZ + 1);
+            });
+
+            $("#aboutalert").hide();
+
+        // Make all the close buttons work
+        $('.close').each(function(i, obj) {
+                // hide the parent element when the close button is clicked
+                $(this).click(function(){
+                    $(this).parentsUntil(".window").parent().hide();
+                    // if there is an iframe, set src to empty string
+                    $(this).parentsUntil(".window").parent().find("iframe").each(function(){  $(this).attr("src", "")  });
+                });
+            });
+
+            // define a function to make a browser window. It should copy class=window and then add a custom iframe url. 
+            function makeWindow(url, windowtitle){
+                var newWindow = $("#orig-browser").clone();
+                // give newWindow a unique id
+                newWindow.attr("id", "window" + Math.floor(Math.random() * 1000000));
+                newWindow.find("iframe").attr("src", url);
+                newWindow.show();
+                newWindow.appendTo("body");
+                newWindow.draggable({ handle: ".title-bar" });
+                // link the close button of the new window
+                newWindow.find(".close").click(function(){
+                    $(this).parentsUntil(".window").parent().hide();
+                    // if there is an iframe, set src to empty string
+                    $(this).parentsUntil(".window").parent().find("iframe").each(function(){  $(this).attr("src", "")  });
+                });
+                // Move newWindow a little bit to the right and down
+                newWindow.css("left", newWindow.position().left + Math.random() * 50);
+                newWindow.css("top", newWindow.position().top + Math.random() * 50);
+
+                // Set urlfield's inner text to the url
+                newWindow.find(".urlfield").text(url);
+                // Set newtab's href to the url
+                newWindow.find(".newtab").attr("href", url);
+
+
+                // Set the title of the window to  windowtitle
+                newWindow.find(".title").text(windowtitle);
+
+                // Set the z-index to be maxZ + 1
+                newWindow.css("z-index", maxZ + 1);
+
+
+                // Now we want to tie the class='resize' button to making the window bigger or smaller
+                newWindow.find(".resize").click(function(){
+                    var windowWidth = newWindow.width();
+                    var windowHeight = newWindow.height();
+                    console.log(windowWidth / $( window ).width())
+                    // If window is 50% of screen, make it 100%
+                    if (windowWidth < 0.6 * $( window ).width()){
+                        console.log("Make big")
+                        // Make position absolute 
+                        newWindow.css("position", "absolute");
+                        newWindow.css("width", "100%");
+                        newWindow.css("height", "100%");
+                        newWindow.css("left", "-17.5px");
+                        newWindow.css("top", "-17.5px");
+                        // Set overflow of html to hidden
+                        $("html").css("overflow", "hidden");
+
+                    }
+                    // if window is >50% of screen, make it 50%
+                    else{
+                        newWindow.css("width", "50vw");
+                        newWindow.css("height", "50vh");
+                        // make position relative
+                        newWindow.css("position", "relative");
+                        // Set left and top to something reasonable
+                        newWindow.css("left", "20");
+                        newWindow.css("top", "80");
+                    }
+
+                });
+
+                // Manage windows
+                manageWindows()
+
+
+            }
+
+            $("#orig-browser").hide();
+
+
+                // For all browseropen links, make a new window when clicked
+                $(".browseropen").each(function(i, obj) {
+                    $(this).click(function(){
+                        var url = $(this).attr("data-url");
+                        // windowtitle is the text of the link
+                        var windowtitle = $(this).text();
+                        makeWindow(url, windowtitle);
+                    });
+                });
+            
+            // Define the following window management function
+            function manageWindows(){
+
+                // For all 'window' elements, on click, set their z index to be higher than any other window
+                $(".window").each(function(i, obj) {
+                    $(this).on('mousedown',function(){
+                        
+                        $(".window").each(function(i, obj) {
+                            var z = parseInt($(this).css("z-index"));
+                            if (z > maxZ){
+                                maxZ = z;
+                            }
+                        });
+                        $(this).css("z-index", maxZ + 1);
+                        // console.log(maxZ)
+                    });
+                });
+            }
+
+
+            possible_bk = ["10042.png","130.png","137.png","148.png","19688.png","1977.png","24642.png","32623.png","7527.png","1111.png","13096.png","139.png","149.png","1969.png","1978.png","24817.png","3727.png","8388.png","11703.png","131.png","141.png","150.png","1970.png","20318.png","2767.png","4193.png","8448.png","12484.png","132.png","142.png","151.png","1971.png","20446.png","28851.png","547.png","870.png","12593.png","133.png","144.png","16825.png","1972.png","21225.png","28920.png","6006.png","9695.png","128.png","134.png","145.png","16974.png","1973.png","22348.png","29907.png","6741.png","987.png","12821.png","136.png","146.png","17803.png","1974.png","23295.png","30711.png","7321.png","129.png","13665.png","147.png","18078.png","1975.png","24517.png","31689.png","7344.png"]
+            
+            function randomBk(){
+            // Choose a random background
+            var bk = possible_bk[Math.floor(Math.random() * possible_bk.length)];
+            bkstring = "url('mac-bk/" + bk + "')"
+            // set screen-background to the chosen background
+            $("#screen-background").css("background-image", bkstring);
+            // console.log(bkstring)
+            // Set a timeout to call this function again in 10 seconds
+            setTimeout(randomBk, 10000);
+            }
+            randomBk()
+
+        }
+        
+        
+
+        
+        )
+    </script>
+
+    <style>
+        html{
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            /* animation: shutdown 3s linear 1 ; */
+        }
+
+        /* body{
+        } */
+
+        .window{
+            position:absolute;
+        }
+
+        .desktop-icon{
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-weight: bold;
+            color: black;
+            cursor: pointer;
+        }
+        .desktop-icon h3{
+            font-family: "Inconsolata", Menlo, Chicago, Geneva;
+            font-size:14px;
+            font-weight: 200;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        #desktop-trash{
+            bottom: 50px;
+            right:20px;
+        }
+
+        /* from https://codepen.io/crossdjinn/pen/PdeJbM */
+        /* @keyframes shutdown {
+    0%        { opacity: 0; }
+    8%, 46%   { transform: scale(1, 1); opacity: 1; }
+    50%       { transform: scale(1, 0.02); opacity: 0.8; }
+    55%, 100% { transform: scale(0, 0); opacity: 0.3; }
+            } */
+
+
+    </style>
+</head>
+<body>
+
+    <!-- wrapper for menu with black background -->
+    <div style="background-color: black; padding: 2px; margin: -8px -8px; height:100;  ">
+        <!-- Header here - along top of screen - use .menu-bar -->
+        <ul role="menu-bar" style="border-radius: 8px 8px 0 0; width=100%">
+            <li role="menu-item" tabindex="0" aria-haspopup="true">
+            <img src="./rainbow.png" alt="rainbow" style="width: 16px; height: 16px; vertical-align: middle;">
+                <ul role="menu">
+                    <li role="menu-item"><a id="showabout">About This Website ...</a></li>
+                    <li role="menu-item" class="divider"></li>
+                    <li role="menu-item"><a href="https://www.english.cam.ac.uk/people/Leonardo.Impett" target="_blank">Leo's faculty page</a></li>
+                    <li role="menu-item"><a>Shut Down</a></li>
+                    
+                </ul>
+            </li>
+
+            <li role="menu-item" tabindex="0" style="pointer-events: none; color:gray">File</li>
+            <li role="menu-item" tabindex="0" style="pointer-events: none; color:gray">Edit</li>
+            <li role="menu-item" tabindex="0" style="pointer-events: none; color:gray">View</li>
+            <!-- Demos -->
+            <li role="menu-item" tabindex="0">Demos
+                <ul role="menu">
+                    <li role="menu-item"><a data-url="http://leoimpett.github.io/CosmicSlotGame" class="browseropen">Cosmic Slot Game</a></li>
+                    <li role="menu-item"><a data-url="" class="browseropen">2D CLIP</a></li>
+                </ul>
+            </li>
+            <!-- Resources -->
+            <li role="menu-item" tabindex="0">Resources
+                <ul role="menu">
+                    <li role="menu-item"><a data-url="https://www.youtube.com/embed/Qil4kmvm2Sw" class="browseropen">Neocognitron</a></li>
+                </ul>
+            </li>
+            <!-- Publications -->
+            <li role="menu-item" tabindex="0">Publications
+                <ul role="menu">
+                    <li role="menu-item"><a href="https://link.springer.com/article/10.1007/s00146-020-01124-6" target="_blank">Ways of Machine Seeing (2021)</a></li> 
+                    <li role="menu-item"><a data-url="publications/goethe/goethe.pdf#toolbar=0&navpanes=0&scrollbar=0" class="browseropen">Prettiness Algorithms (2022)</a></li>
+                </ul>
+            </li>
+
+
+
+        <!-- Set clock on right hand side -->
+        <div style="width:100%; text-align: right; padding: 6px; " >
+            <li id="clock"  ></li>
+            <script>
+                function updateClock ( )
+                {
+                    var currentTime = new Date ( );
+                    var currentHours = currentTime.getHours ( );
+                    var currentMinutes = currentTime.getMinutes ( );
+                    var currentSeconds = currentTime.getSeconds ( );
+                    currentMinutes = ( currentMinutes < 10 ? "0" : "" ) + currentMinutes;
+                    currentSeconds = ( currentSeconds < 10 ? "0" : "" ) + currentSeconds;
+                    var timeOfDay = ( currentHours < 12 ) ? "AM" : "PM";
+                    currentHours = ( currentHours > 12 ) ? currentHours - 12 : currentHours;
+                    currentHours = ( currentHours == 0 ) ? 12 : currentHours;
+                    // var currentTimeString = currentHours + ":" + currentMinutes + ":" + currentSeconds + " " + timeOfDay;
+                    var currentTimeString = currentHours + ":" + currentMinutes  + " " + timeOfDay;
+                    $("#clock").html(currentTimeString);
+                }
+                $(document).ready(function(){
+                    updateClock();
+                    setInterval('updateClock()', 1000);
+                });
+            </script>
+
+        </div>
+        </ul>
+
+
+    </div>
+    
+
+    <!-- Desktop icon -->
+    <div class="desktop-icon" id="desktop-trash">
+        <img src="6.png">
+        <h3>Trash</h3>
+    </div>
+
+
+
+
+    <div class="window scale-down" style="width:30rem;" id="aboutalert" >
+        <div class="title-bar">
+          <button aria-label="Close" class="close"></button>
+          <h1 class="title">About This Page</h1>
+        </div>
+        <div class="separator"></div>
+      
+        <div class="modeless-dialog">
+            <p class="alert-text" style="padding-left:10px;">
+                Welcome to Leo Impett's Website. I work on computer vision, neural networks, art history, visual culture. 
+                    <br><br>
+                I teach at the University of Cambridge, UK at <a href="https://www.cdh.cam.ac.uk/about/" target="_blank">Cambridge Digital Humanities</a>. 
+                    <br><br>
+            </p> 
+
+            <section class="field-row" style="justify-content: flex-end">
+            <button  style="width:95px;" class="btn close">Fine</button>
+          </section>
+        </div>
+      </div>
+
+
+
+
+
+        <!-- Browser window! -->
+        <!-- style="resize: both;" -->
+    <div id="orig-browser" class="window " style="width:50vw; height:50vh; "  >
+        <div class="title-bar"> 
+            <button aria-label="Close" class="close"></button>
+            <h1 class="title">Browser</h1>   
+            <button aria-label="Resize" class="resize"></button>
+            <!-- <button aria-label="Resize" disabled class="hidden"></button> -->
+        </div>
+
+        <div class="details-bar">
+            <span><a class="newtab" href="" target="_blank"><span class="urlfield" style="color:grey">URL</span></a></span> 
+          </div>
+          <div style="border:0; height: calc(100% - 65px); width: 100%; display:flex; ">
+        <iframe  src="http://leoimpett.github.io/CosmicSlotGame" style="border:0; flex: 1" donotallowfullscreen></iframe>
+    </div>
+    </div>
+
+    <!-- Filler for the rest of the screen -->
+    <div  id="screen-background" style="width:100%; height:100%; background-image:url(./mac-bk/131.png) ;background-repeat: repeat; opacity: 1; position: absolute; top:0; left:0; z-index: -5;"></div>
+     
+</body>
+</html>
